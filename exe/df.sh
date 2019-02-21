@@ -1,0 +1,3 @@
+maintenance
+diag diskusage
+exit

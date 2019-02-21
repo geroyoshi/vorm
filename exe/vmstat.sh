@@ -1,0 +1,3 @@
+maintenance
+diag vmstat
+exit

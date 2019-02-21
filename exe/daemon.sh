@@ -1,0 +1,3 @@
+maintenance
+diag daemon
+exit
