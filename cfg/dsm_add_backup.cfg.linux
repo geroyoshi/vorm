@@ -1,0 +1,9 @@
+# $1:time (0030)
+# $2:day (mon-sun)
+# $3:type (win/scp)
+# $4:servername
+# $5:directory
+# $6:user
+# $7:curl assign admin
+#
+1230|wed|scp|linux80.citsdomain2.local|/vormetric_bkup|root|superadmin
