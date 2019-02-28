@@ -10,8 +10,8 @@
 
 MY_NAME=`basename $0`
 EXEC_NAME=`echo ${MY_NAME} | awk -F'.' '{print $2}'`
+CFG_FILE=${CFG_DIR}/${EXEC_NAME}.cfg
 
-DAT_FILE=${CFG_DIR}/vts_data.cfg
 SLEEP_TIME=300
 TMP_FILE=/tmp/${EXEC_NAME}.txt; cp /dev/null ${TMP_FILE}
 USER=`openssl rsautl -decrypt -inkey ${KEY} -in ${VTSWATCH_CFG}`
@@ -28,25 +28,29 @@ do
     do
         URL=https://${IP}/vts/rest/v2.0/tokenize
 
-        curl -sS -o ${TMP_FILE} -k -X POST -u ${USER} -d @${DAT_FILE} ${URL}
-        # 出力待ちとして1sec
-        sleep 1
-        grep -i succeed ${TMP_FILE}
-
-        #--- error時、再実施 ---#
-        if [[ $? != ${SUCCESS} ]]; then
-            sleep 3
-
+        grep -v ^# ${CFG_FILE} | while read DAT_FILE
+        do
             curl -sS -o ${TMP_FILE} -k -X POST -u ${USER} -d @${DAT_FILE} ${URL}
             # 出力待ちとして1sec
             sleep 1
             grep -i succeed ${TMP_FILE}
-            #--- それでもerror時、logger ---#
+
+            #--- error時、再実施 ---#
             if [[ $? != ${SUCCESS} ]]; then
-                logger -t ${EXEC_NAME} -p auth.crit ${IP} is down
+                sleep 3
+
+                curl -sS -o ${TMP_FILE} -k -X POST -u ${USER} -d @${DAT_FILE} ${URL}
+                # 出力待ちとして1sec
+                sleep 1
+                grep -i succeed ${TMP_FILE}
+                #--- それでもerror時、logger ---#
+                if [[ $? != ${SUCCESS} ]]; then
+                    KEY=`grep tokengroup ${DAT_FILE} | awk -F':' '{print $2}' | tr -d \",`
+                    logger -t ${EXEC_NAME} -p auth.crit "${IP} is down (KEY=${KEY})"
+                fi
             fi
-        fi
-        cp /dev/null ${TMP_FILE}
+            cp /dev/null ${TMP_FILE}
+        done
     done
     sleep ${SLEEP_TIME}
 done
