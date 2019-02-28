@@ -45,6 +45,7 @@ VTS_WATCH_USER=vtswatch
 VTS_WATCH_USER_KEY=${CFG_DIR}/vtswatch.key
 VTS_WATCH_USER_CERT=${CFG_DIR}/vtswatch.crt
 VTS_ADMIN_USER=cliadmin
+VTS_SLEEP_TIME=300
 
 KEY=${CFG_DIR}/key
 ADMIN_CFG=${CFG_DIR}/user_admin.cfg

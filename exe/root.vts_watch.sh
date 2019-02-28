@@ -12,7 +12,6 @@ MY_NAME=`basename $0`
 EXEC_NAME=`echo ${MY_NAME} | awk -F'.' '{print $2}'`
 CFG_FILE=${CFG_DIR}/${EXEC_NAME}.cfg
 
-SLEEP_TIME=300
 TMP_FILE=/tmp/${EXEC_NAME}.txt; cp /dev/null ${TMP_FILE}
 USER=`openssl rsautl -decrypt -inkey ${KEY} -in ${VTSWATCH_CFG}`
 
@@ -52,5 +51,5 @@ do
             cp /dev/null ${TMP_FILE}
         done
     done
-    sleep ${SLEEP_TIME}
+    sleep ${VTS_SLEEP_TIME}
 done
