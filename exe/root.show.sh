@@ -101,6 +101,12 @@ function func_dsm_ha {
   sh root.dsm_show_ha.sh
 }
 
+function func_dsm_syslog {
+  cd ${EXE_DIR}
+  echo
+  sh root.dsm_show_syslog.sh
+}
+
 function func_vte_agent {
   cd ${EXE_DIR}
   echo
@@ -123,6 +129,12 @@ function func_vte_gp {
   cd ${EXE_DIR}
   echo
   sh root.vte_show_gp.sh
+}
+
+function func_vte_syslog {
+  cd ${EXE_DIR}
+  echo
+  sh root.vte_show_syslog.sh
 }
 
 function func_vts_agent {
@@ -154,8 +166,9 @@ do
      2) license           22) key              32) key
      3) admin_user        23) policy
      4) domain            24) guard point
-     5) backup
+     5) backup            25) syslog
      6) ha
+     7) syslog
 
   ・処理終了
     99) exit
@@ -176,10 +189,12 @@ EOF
           4) func_dsm_domain          ;;
           5) func_dsm_backup          ;;
           6) func_dsm_ha              ;;
+          7) func_dsm_syslog          ;;
          21) func_vte_agent           ;;
          22) func_vte_key             ;;
          23) func_vte_policy          ;;
          24) func_vte_gp              ;;
+         25) func_vte_syslog          ;;
          31) func_vts_agent           ;;
          32) func_vts_key             ;;
          99) exit 0                   ;;

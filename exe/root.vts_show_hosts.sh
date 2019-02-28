@@ -1,6 +1,6 @@
 #!/bin/sh
 #---------------------------------#
-# dsm config gw-timezone          #
+# show hostname for vts           #
 #       Authored by Y.Miyamoto    #
 #---------------------------------#
 #-----#
@@ -10,32 +10,25 @@
 
 MY_NAME=`basename $0`
 EXEC_NAME=`echo ${MY_NAME} | awk -F'.' '{print $2}'`
-BEF_FILE=${LOG_DIR}/bef_${EXEC_NAME}_`date "+%Y%m%d-%H%M%S"`.log
-OUP_FILE=${LOG_DIR}/${EXEC_NAME}.log; cp /dev/null ${OUP_FILE}
 
-RC_TMP=${LOG_DIR}/RC_${EXEC_NAME}.tmp ; cp /dev/null ${RC_TMP}
+PASS=`openssl rsautl -decrypt -inkey ${KEY} -in ${VTSADMIN_PASS}`
+TODAY=`date "+%Y%m%d"`
 
-TGT_SH="
-root.dsm_add_dns.sh
-root.dsm_add_ntp.sh
-root.dsm_add_time.sh
-root.dsm_add_name.sh
-root.dsm_add_ca.sh
-"
+RC_TMP=${LOG_DIR}/${EXEC_NAME}.tmp ; cp /dev/null ${RC_TMP}
 
-ARG=$1
-
-#-------#
-# start #
-#-------#
 echo -e "\n***** Info  : ${MY_NAME} Start *****"
 
+ARG=$1
 case ${ARG} in
     #--- 引数が「1」の場合、Primaryが対象
-    1) :
+    1) TGT=${PRIMARY_VTS}
+       EXEC_SH=${CFG_DIR}/vtshostshow_1.sh
+       LOG=${LOG_DIR}/${EXEC_NAME}_1_`date "+%Y%m%d-%H%M%S"`.log
     ;;
     #--- 引数が「2」の場合、Secondaryが対象
-    2) :
+    2) TGT=${SECONDARY_VTS}
+       EXEC_SH=${CFG_DIR}/vtshostshow_2.sh
+       LOG=${LOG_DIR}/${EXEC_NAME}_2_`date "+%Y%m%d-%H%M%S"`.log
     ;;
     *) echo -e "\n***** Info  : Argument Error *****"
        echo -e "\n***** Info  : ${MY_NAME} Abend *****"
@@ -43,15 +36,14 @@ case ${ARG} in
     ;;
 esac
 
-for TGT in ${TGT_SH}
-do
-    sh ${EXE_DIR}/${TGT} ${ARG}
-    (( RC = ${RC} + $? ))
-    echo ${RC} > ${RC_TMP}
-    cd ${EXE_DIR}
-done
+#--- exec ---#
+sshpass -p ${PASS} ssh ${VTS_ADMIN_USER}@${TGT} < ${EXEC_SH} > ${LOG} 2>&1
+RC=$?
 
-RC=`cat ${RC_TMP}`
+#--- after ---#
+# show host 結果から、ホスト名・IPが出力されていることを確認
+#
+grep "name=" ${LOG}
 
 if [[ ${RC} = ${SUCCESS} ]]; then
     echo -e "\n***** Info  : ${MY_NAME} End *****"
