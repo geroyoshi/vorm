@@ -16,6 +16,7 @@ EXEC_SH=${EXE_DIR}/df.sh
 TODAY=`date "+%Y%m%d"`
 LOG=${LOG_DIR}/${EXEC_NAME}_`date "+%Y%m%d-%H%M%S"`.log
 
+# HA構成なので、プライマリのみ実施
 sshpass -p ${PASS} ssh ${DSM_ADMIN_USER}@${PRIMARY_DSM_SERVER} < ${EXEC_SH} > ${LOG} 2>&1
 
 # "%"の出力ある行のみ→不要行削除→桁ずれ対策として、行末からawk→"%"削除

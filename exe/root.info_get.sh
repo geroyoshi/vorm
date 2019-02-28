@@ -23,13 +23,14 @@ echo -e "\n***** Info  : ${MY_NAME} Start *****"
 case ${ARG} in
     #--- 引数が「DSM/dsm/d/D」の場合、DSMが対象
     DSM|dsm|d|D) TGT_SH="root.dsm_show_conf.sh root.dsm_show_lic.sh root.dsm_show_admin.sh \
-                         root.dsm_show_domain.sh root.dsm_show_backup.sh root.dsm_show_ha.sh"
+                         root.dsm_show_domain.sh root.dsm_show_backup.sh root.dsm_show_ha.sh \
+                         root.dsm_show_syslog.sh"
                  TGT_LOG="dsm_show"
                  OUP_FILE=${LOG_DIR}/${EXEC_NAME}_DSM_`date "+%Y%m%d-%H%M%S"`.tar
     ;;
     #--- 引数が「VTE/vte/e/E」の場合、VTEが対象
     VTE|vte|e|E) TGT_SH="root.vte_show_host.sh root.vte_show_key.sh root.vte_show_policy.sh \
-                         root.vte_show_gp.sh"
+                         root.vte_show_gp.sh root.vte_show_syslog.sh"
                  TGT_LOG="vte_show"
                  OUP_FILE=${LOG_DIR}/${EXEC_NAME}_VTE_`date "+%Y%m%d-%H%M%S"`.tar
     ;;

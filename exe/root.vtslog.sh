@@ -1,6 +1,6 @@
 #!/bin/sh
 #---------------------------------#
-# log get for dsm                 #
+# log get for vts                 #
 #       Authored by Y.Miyamoto    #
 #---------------------------------#
 #-----#
@@ -11,18 +11,18 @@
 MY_NAME=`basename $0`
 EXEC_NAME=`echo ${MY_NAME} | awk -F'.' '{print $2}'`
 
-PASS=`openssl rsautl -decrypt -inkey ${KEY} -in ${ADMIN_PASS}`
-EXEC_SH=${CFG_DIR}/dsmlogget.sh
+PASS=`openssl rsautl -decrypt -inkey ${KEY} -in ${VTSADMIN_PASS}`
+EXEC_SH=${CFG_DIR}/vtslogget.sh
 TODAY=`date "+%Y%m%d"`
 
 ARG=$1
 case ${ARG} in
     #--- 引数が「1」の場合、Primaryが対象
-    1) TGT=${PRIMARY_DSM_SERVER}
+    1) TGT=${PRIMARY_VTS}
        LOG=${LOG_DIR}/${EXEC_NAME}_1_`date "+%Y%m%d-%H%M%S"`.log
     ;;
     #--- 引数が「2」の場合、Secondaryが対象
-    2) TGT=${SECONDARY_DSM_SERVER}
+    2) TGT=${SECONDARY_VTS}
        LOG=${LOG_DIR}/${EXEC_NAME}_2_`date "+%Y%m%d-%H%M%S"`.log
     ;;
     *) echo -e "\n***** Info  : Argument Error *****"
@@ -31,6 +31,6 @@ case ${ARG} in
     ;;
 esac
 
-sshpass -p ${PASS} ssh ${DSM_ADMIN_USER}@${TGT} < ${EXEC_SH} > ${LOG} 2>&1
+sshpass -p ${PASS} ssh ${VTS_ADMIN_USER}@${TGT} < ${EXEC_SH} > ${LOG} 2>&1
 
 echo -e "\n ログ・・・${LOG}"
