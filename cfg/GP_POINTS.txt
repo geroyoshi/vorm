@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 C:\Users\administrator.CITSDOMAIN2\Documents
 C:\Program Files\Documents\test_folder2
 C:\Users\administrator.CITSDOMAIN2\Documents\test_folder
@@ -5,4 +6,13 @@ C:\Users\administrator.CITSDOMAIN2\Documents\test_folder2
 C:\Users\administrator.CITSDOMAIN2\Documents\test_folder3
 C:\Users\administrator.CITSDOMAIN2\Documents\test_folder4
 E:\test_encryption
+=======
+C:\Users\administrator.CITSDOMAIN2\Documents
+C:\Program Files\Documents\test_folder2
+C:\Users\administrator.CITSDOMAIN2\Documents\test_folder
+C:\Users\administrator.CITSDOMAIN2\Documents\test_folder2
+C:\Users\administrator.CITSDOMAIN2\Documents\test_folder3
+C:\Users\administrator.CITSDOMAIN2\Documents\test_folder4
+E:\test_encryption
+>>>>>>> f16b409204663cf0a1b57101c64415d9a246ab60
 C:\Users\administrator.CITSDOMAIN2\Documents\これが！　空白の　フォルダ
