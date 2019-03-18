@@ -1,0 +1,39 @@
+#!/bin/sh
+#---------------------------------#
+# dsm add system syslog           #
+#       Authored by Y.Miyamoto    #
+#---------------------------------#
+#-----#
+# env #
+#-----#
+. `dirname $0`/../cfg/set_env.sh
+
+MY_NAME=`basename $0`
+EXEC_NAME=`echo ${MY_NAME} | awk -F'.' '{print $2}'`
+LOG_FILE=${LOG_DIR}/${EXEC_NAME}_`date "+%Y%m%d-%H%M%S"`.log
+
+USER=`openssl rsautl -decrypt -inkey ${KEY} -in ${ADMIN_CFG}`
+TGT_CURL=${CFG_DIR}/curl_${EXEC_NAME}.cfg
+
+#-------#
+# start #
+#-------#
+echo -e "\n***** Info  : ${MY_NAME} Start *****"
+
+curl -sS -k -X POST -u ${USER} -H 'Content-Type: application/json' -d @${TGT_CURL} https://${PRIMARY_DSM_SERVER}/dsm/v1/syslog
+RC_C=$?
+
+curl -sS -o ${LOG_FILE} -k -X GET -u ${USER} https://${PRIMARY_DSM_SERVER}/dsm/v1/syslog
+RC=$?
+
+(( RC = ${RC} + ${RC_C} ))
+
+if [[ ${RC} = ${SUCCESS} ]]; then
+    echo
+    cat ${LOG_FILE}
+    echo -e "\n***** Info  : ${MY_NAME} End *****"
+    exit ${SUCCESS}
+else
+    echo -e "\n***** Info  : ${MY_NAME} Abend *****"
+    exit ${ERRORS}
+fi

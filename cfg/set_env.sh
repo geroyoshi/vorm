@@ -24,10 +24,11 @@ SYSLOG=messages
 
 PRIMARY_DSM_SERVER=vdsm83.citsdomain2.local
 SECONDARY_DSM_SERVER=vdsm84.citsdomain2.local
-DOM_URL=v1/domains/1000
+DOM_URL=v1/domains/1001
 DOMAIN_NAME=dsmdomain
 LICENSE_FILE=${CFG_DIR}/Version_6_-_Vormetric_POC_NO_KMIP-_Q4_2017_01-04-2017
 DSM_ADMIN_USER=cliadmin
+SYNCTGT_DSM=2                 # 同期対象DSMサーバ数
 
 # 対象VTE
 # for win

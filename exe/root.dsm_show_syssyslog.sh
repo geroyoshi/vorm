@@ -1,6 +1,6 @@
 #!/bin/sh
 #---------------------------------#
-# dsm show ha                     #
+# dsm show system syslog          #
 #       Authored by Y.Miyamoto    #
 #---------------------------------#
 #-----#
@@ -10,22 +10,20 @@
 
 MY_NAME=`basename $0`
 EXEC_NAME=`echo ${MY_NAME} | awk -F'.' '{print $2}'`
-BEF_FILE=${LOG_DIR}/${EXEC_NAME}_`date "+%Y%m%d-%H%M%S"`.log
-TMP_FILE=${LOG_DIR}/${EXEC_NAME}_`date "+%Y%m%d-%H%M%S"`.tmp; cp /dev/null ${TMP_FILE}
+LOG_FILE=${LOG_DIR}/${EXEC_NAME}_`date "+%Y%m%d-%H%M%S"`.log
 
-cd ${VMSSC_PATH}
+USER=`openssl rsautl -decrypt -inkey ${KEY} -in ${ADMIN_CFG}`
 
 #-------#
 # start #
 #-------#
 echo -e "\n***** Info  : ${MY_NAME} Start *****"
 
-#--- before ---#
-./vmssc server show -f | tee -a ${BEF_FILE}
+curl -sS -o ${LOG_FILE} -k -X GET -u ${USER} https://${PRIMARY_DSM_SERVER}/dsm/v1/syslog
+RC=$?
 
-RC=`grep "sync status" ${BEF_FILE} | grep -c Success`
-
-if [[ ${RC} -eq ${SYNCTGT_DSM} ]]; then
+if [[ ${RC} = ${SUCCESS} ]]; then
+    cat ${LOG_FILE}
     echo -e "\n***** Info  : ${MY_NAME} End *****"
     exit ${SUCCESS}
 else

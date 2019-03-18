@@ -1,6 +1,6 @@
 #!/bin/sh
 #---------------------------------#
-# add process set                 #
+# chg resource set                #
 #       Authored by Y.Miyamoto    #
 #---------------------------------#
 #-----#
@@ -26,32 +26,35 @@ RC_G_TMP=${LOG_DIR}/C_${EXEC_NAME}.tmp ; cp /dev/null ${RC_G_TMP}
 echo -e "\n***** Info  : ${MY_NAME} Start *****"
 
 #--- before ---#
-curl -o ${BEF_FILE} -sS -k -X GET -u ${USER} https://${PRIMARY_DSM_SERVER}/dsm/${DOM_URL}/usersets
+curl -o ${BEF_FILE} -sS -k -X GET -u ${USER} https://${PRIMARY_DSM_SERVER}/dsm/${DOM_URL}/resourcesets
 
-#--- exec ---#
-grep -v ^# ${CFG_FILE} | while read TGT_USER
+# process_idを取得する
+grep -v ^# ${CFG_FILE} | while read TGT_RESOURCE
 do
-    AFT_FILE=${LOG_DIR}/aft_${EXEC_NAME}_${TGT_USER}_`date "+%Y%m%d-%H%M%S"`.log
-    TGT_CURL=${CFG_DIR}/policy_dir/curl_${EXEC_NAME}_${TGT_USER}.cfg
+    PROC_ID=`grep -B 2 \"${TGT_RESOURCE}\" ${BEF_FILE}| grep "id"| awk -F':' '{print $2}'| tr -d ","| tr -d [:blank:]`
 
-    curl -o ${AFT_FILE} -sS -k -X POST -u ${USER} -H 'Content-Type: application/json' -d @${TGT_CURL} https://${PRIMARY_DSM_SERVER}/dsm/${DOM_URL}/usersets
-    RC_C=$?
-    (( RC = ${RC} + ${RC_C} ))
+    AFT_FILE=${LOG_DIR}/aft_${EXEC_NAME}_${TGT_RESOURCE}_`date "+%Y%m%d-%H%M%S"`.log
+    TGT_CURL=${CFG_DIR}/policy_dir/curl_${EXEC_NAME}_${TGT_RESOURCE}.cfg
+
+    #--- exec ---#
+    curl -o ${AFT_FILE} -sS -k -X PUT -u ${USER} -H 'Content-Type: application/json' -d @${TGT_CURL} https://${PRIMARY_DSM_SERVER}/dsm/${DOM_URL}/resourcesets/${PROC_ID}
+    RC=$?
+    (( RC_C = ${RC} + ${RC_C} ))
 
     echo ${RC} > ${RC_C_TMP}
 done
 
 #--- after ---#
-curl -o ${AFT_FILE2} -sS -k -X GET -u ${USER} https://${PRIMARY_DSM_SERVER}/dsm/${DOM_URL}/usersets
+curl -o ${AFT_FILE2} -sS -k -X GET -u ${USER} https://${PRIMARY_DSM_SERVER}/dsm/${DOM_URL}/resourcesets
 
-grep -v ^# ${CFG_FILE} | while read TGT_USER
+grep -v ^# ${CFG_FILE} | while read TGT_RESOURCE
 do
-    grep -q ${TGT_USER} ${AFT_FILE2} 
-    RC_G=$?
-    if [[ ${RC_G} != ${SUCCESS} ]]; then
-        echo -e "\n***** ${TGT_USER} : [ NG ] *****"
+    grep -q ${TGT_RESOURCE} ${AFT_FILE2}
+    RC=$?
+    if [[ ${RC} != ${SUCCESS} ]]; then
+        echo -e "\n***** ${TGT_RESOURCE} : [ NG ] *****"
     fi
-    (( RC = ${RC} + ${RC_G} ))
+    (( RC_G = ${RC} + ${RC_G} ))
 
     echo ${RC} > ${RC_G_TMP}
 done

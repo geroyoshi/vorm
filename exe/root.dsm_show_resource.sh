@@ -1,6 +1,6 @@
 #!/bin/sh
 #---------------------------------#
-# dsm show process set            #
+# dsm show resource set           #
 #       Authored by Y.Miyamoto    #
 #---------------------------------#
 #-----#
@@ -24,10 +24,10 @@ cd ${CURL_PATH}
 echo -e "\n***** Info  : ${MY_NAME} Start *****"
 
 #--- 情報取得 ---#
-grep -v ^# ${CFG_FILE} | while read TGT_PROC
+grep -v ^# ${CFG_FILE} | while read TGT_RESOURCE
 do
-    TGT_CURL=${CFG_DIR}/policy_dir/curl_dsm_add_process_${TGT_PROC}.cfg
-    curl -o ${TGT_CURL} -sS -k -X GET -u ${USER} https://${PRIMARY_DSM_SERVER}/dsm/${DOM_URL}/processsets/${TGT_PROC}
+    TGT_CURL=${CFG_DIR}/policy_dir/curl_dsm_add_resource_${TGT_RESOURCE}.cfg
+    curl -o ${TGT_CURL} -sS -k -X GET -u ${USER} https://${PRIMARY_DSM_SERVER}/dsm/${DOM_URL}/resourcesets/${TGT_RESOURCE}
 
     # errorcode
     grep -vq errorCode ${TGT_CURL}
@@ -35,7 +35,7 @@ do
     if [[ ${RC_C} = ${SUCCESS} ]]; then
         ls -ltr ${TGT_CURL}
     else
-        echo -e "\n***** ${TGT_PROC} : [ NG ] *****"
+        echo -e "\n***** ${TGT_RESOURCE} : [ NG ] *****"
     fi
     (( RC = ${RC} + ${RC_C} ))
 
