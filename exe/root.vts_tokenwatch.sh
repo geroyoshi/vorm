@@ -33,9 +33,12 @@ do
         sleep 1
         grep -i succeed ${TMP_FILE} >/dev/null 2>&1
 
+        #--- 表示用に、dataファイル内のtokengroupを取得 ---#
+        TOKENGROUP=`grep tokengroup ${DAT_FILE} | awk -F':' '{print $2}'| tr -d ',"'`
+
         #--- success時、0出力 ---#
         if [[ $? = ${SUCCESS} ]]; then
-            echo "${IP},0"
+            echo "${IP}_${TOKENGROUP},0"
         #--- error時、再実施 ---#
         else
             sleep 1
@@ -46,7 +49,7 @@ do
             grep -i succeed ${TMP_FILE} >/dev/null 2>&1
             #--- それでもerror時、3出力 ---#
             if [[ $? != ${SUCCESS} ]]; then
-                echo "${IP},3"
+                echo "${IP}_${TOKENGROUP},3"
             fi
         fi
         rm -f ${TMP_FILE}
