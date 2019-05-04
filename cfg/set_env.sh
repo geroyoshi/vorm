@@ -49,6 +49,8 @@ VTS_ADMIN_USER=cliadmin
 VTS_SLEEP_TIME=300
 VTS_UPGRADE_DIR=/var/ftp
 VTS_UPGRADE_VER=vts-upgrade-2.3.0.258.zip
+VTS_TOKEN_1=${LOG_DIR}/token_1.txt
+VTS_TOKEN_2=${LOG_DIR}/token_2.txt
 
 KEY=${CFG_DIR}/key
 ADMIN_CFG=${CFG_DIR}/user_admin.cfg

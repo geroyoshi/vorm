@@ -1,6 +1,6 @@
 #!/bin/sh
 #---------------------------------#
-# log get for vts                 #
+# vts api tokentemplate show      #
 #       Authored by Y.Miyamoto    #
 #---------------------------------#
 #-----#
@@ -11,19 +11,23 @@
 MY_NAME=`basename $0`
 EXEC_NAME=`echo ${MY_NAME} | awk -F'.' '{print $2}'`
 
-PASS=`openssl rsautl -decrypt -inkey ${KEY} -in ${VTSADMIN_PASS}`
-EXEC_SH=${CFG_DIR}/vtslogget.sh
-TODAY=`date "+%Y%m%d"`
+AFT_FILE=${LOG_DIR}/aft_${EXEC_NAME}_`date "+%Y%m%d-%H%M%S"`.log
 
 ARG=$1
+
+#-------#
+# start #
+#-------#
+echo -e "\n***** Info  : ${MY_NAME} Start *****\n"
+
 case ${ARG} in
     #--- 引数が「1」の場合、Primaryが対象
     1) TGT=${PRIMARY_VTS}
-       LOG=${LOG_DIR}/${EXEC_NAME}_1_`date "+%Y%m%d-%H%M%S"`.log
+       TOKEN=`cat ${VTS_TOKEN_1}`
     ;;
     #--- 引数が「2」の場合、Secondaryが対象
     2) TGT=${SECONDARY_VTS}
-       LOG=${LOG_DIR}/${EXEC_NAME}_2_`date "+%Y%m%d-%H%M%S"`.log
+       TOKEN=`cat ${VTS_TOKEN_2}`
     ;;
     *) echo -e "\n***** Info  : Argument Error *****"
        echo -e "\n***** Info  : ${MY_NAME} Abend *****"
@@ -31,6 +35,15 @@ case ${ARG} in
     ;;
 esac
 
-sshpass -p ${PASS} ssh ${VTS_ADMIN_USER}@${TGT} < ${EXEC_SH} > ${LOG} 2>&1
+#--- exec ---#
+curl -o ${AFT_FILE} -sS -k -X GET -H "Authorization: Bearer ${TOKEN}"  https://${TGT}/api/tokentemplates/
+RC=$?
 
-echo -e "\n ログ・・・${LOG}"
+if [[ ${RC} = ${SUCCESS} ]]; then
+    cat ${AFT_FILE}
+    echo -e "\n\n***** Info  : ${MY_NAME} End *****"
+    exit ${SUCCESS}
+else
+    echo -e "\n\n***** Info  : ${MY_NAME} Abend *****"
+    exit ${ERRORS}
+fi

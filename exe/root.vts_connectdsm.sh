@@ -1,6 +1,6 @@
 #!/bin/sh
 #---------------------------------#
-# fs watch for vts                #
+# vts - dsm status                #
 #       Authored by Y.Miyamoto    #
 #---------------------------------#
 #-----#
@@ -12,7 +12,7 @@ MY_NAME=`basename $0`
 EXEC_NAME=`echo ${MY_NAME} | awk -F'.' '{print $2}'`
 
 PASS=`openssl rsautl -decrypt -inkey ${KEY} -in ${VTSADMIN_PASS}`
-EXEC_SH=${EXE_DIR}/vts_df.sh
+EXEC_SH=${EXE_DIR}/vts_regstatus.sh
 TODAY=`date "+%Y%m%d"`
 LOG=${LOG_DIR}/${EXEC_NAME}_`date "+%Y%m%d-%H%M%S"`.log
 
@@ -32,7 +32,4 @@ esac
 
 sshpass -p ${PASS} ssh ${VTS_ADMIN_USER}@${TGT} < ${EXEC_SH} > ${LOG} 2>&1
 
-# "%"の出力ある行のみ→不要行削除→桁ずれ対策として、行末からawk→"%"削除
-grep "%" ${LOG} |sed -n '2,$p' |awk '{print $NF","$(NF-1)}'| tr -d '%'
-
-rm -f ${LOG}
+sed -n '3,$p' ${LOG}
