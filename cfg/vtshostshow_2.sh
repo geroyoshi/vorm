@@ -1,3 +1,2 @@
-network
-host show
+system hosts --show
 exit

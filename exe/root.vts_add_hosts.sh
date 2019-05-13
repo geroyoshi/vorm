@@ -44,9 +44,9 @@ sshpass -p ${PASS} ssh ${VTS_ADMIN_USER}@${TGT} < ${EXEC_SH} > ${LOG} 2>&1
 #--- after ---#
 # show host 結果から、ホスト名・IPが出力されていることを確認
 #
-grep "host add" ${EXEC_SH} |awk '{print $3,$4}' |while read TGTHOST TGTIP
+grep "hosts --add" ${EXEC_SH} |awk '{print $4,$5}' |while read TGTIP TGTHOST
 do
-    grep "name=${TGTHOST} ip=${TGTIP}" ${LOG}
+    grep ${TGTIP} ${LOG} | grep ${TGTHOST}
     RC_C=$?
     (( RC = ${RC} + ${RC_C} ))
 
