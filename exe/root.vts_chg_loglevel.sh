@@ -26,7 +26,7 @@ cd ${VMSSC_PATH}
 echo -e "\n***** Info  : ${MY_NAME} Start *****"
 
 case ${ARG} in
-    #--- 引数が「-i/-info」の場合、info
+    #--- 引数が「i/info」の場合、info
     -i|-info|-I|-INFO)
        TGT_CURL=${CFG_DIR}/curl_${EXEC_NAME}_info.cfg
        TGT_LEVEL=info
@@ -41,10 +41,15 @@ case ${ARG} in
        TGT_CURL=${CFG_DIR}/curl_${EXEC_NAME}_debug.cfg
        TGT_LEVEL=debug
     ;;
-    #--- 引数が「t/trace」の場合、trace
-    -t|-trace|-T|-TRACE)
-       TGT_CURL=${CFG_DIR}/curl_${EXEC_NAME}_trace.cfg
-       TGT_LEVEL=trace
+    #--- 引数が「c/critical」の場合、critical
+    -c|-critical|-C|-CRIT)
+       TGT_CURL=${CFG_DIR}/curl_${EXEC_NAME}_critical.cfg
+       TGT_LEVEL=critical
+    ;;
+    #--- 引数が「w/warning」の場合、warning
+    -w|-warning|-W|-WARN)
+       TGT_CURL=${CFG_DIR}/curl_${EXEC_NAME}_warning.cfg
+       TGT_LEVEL=warning
     ;;
     *) echo -e "\n***** Info  : Argument Error *****"
        echo -e "\n***** Info  : ${MY_NAME} Abend *****"
