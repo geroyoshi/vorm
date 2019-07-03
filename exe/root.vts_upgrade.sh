@@ -38,17 +38,23 @@ case ${ARG} in
     ;;
 esac
 
-if [[ -f ${VTS_UPGRADE_DIR}
-
-#--- exec ---#
-sshpass -p ${PASS} ssh ${VTS_ADMIN_USER}@${TGT} < ${CFG_FILE} > ${LOG} 2>&1
-RC=$?
-
-if [[ ${RC} = ${SUCCESS} ]]; then
-    cat ${LOG}
-    echo -e "\n***** Info  : ${MY_NAME} End *****"
-    exit ${SUCCESS}
-else
+#--- ファイルが格納されていなければNG ---#
+if [[ ! -f ${VTS_UPGRADE_DIR}/${VTS_UPGRADE_VER} ]]; then
+    echo -e "\n***** Info  : No Upgrade File *****"
     echo -e "\n***** Info  : ${MY_NAME} Abend *****"
     exit ${ERRORS}
+fi
+
+#--- exec ---#
+sshpass -p ${PASS} ssh ${VTS_ADMIN_USER}@${TGT} < ${CFG_FILE} | tee -a ${LOG}
+
+#--- error文言をgrep ---#
+grep -q "Upgrade failed" ${LOG}
+RC=$?
+if [[ ${RC} = ${SUCCESS} ]]; then
+    echo -e "\n***** Info  : ${MY_NAME} Abend *****"
+    exit ${ERRORS}
+else
+    echo -e "\n***** Info  : ${MY_NAME} End *****"
+    exit ${SUCCESS}
 fi
