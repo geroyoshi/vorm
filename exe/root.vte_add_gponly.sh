@@ -38,6 +38,7 @@ do
     NAME=`echo ${TGT} | awk -F'|' '{print $3}'`
 
     #--- exec ---#
+    echo -e "\n***** Info  : ${NAME} ${DIR} *****"
     ./vmssc host addgp -d "${DIR}" -p ${POLICY} ${NAME}
     RC_C=$?
 
